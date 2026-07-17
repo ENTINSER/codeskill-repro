@@ -1,0 +1,2086 @@
+{
+  "no_skill": {
+    "config": "no_skill",
+    "results": [
+      {
+        "task_id": "race_01",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 5.436928033828735,
+        "used_skill_ids": [],
+        "fixed_code": "def count_parallel(n):\n    import threading\n    counter = 0\n    lock = threading.Lock()\n    def worker():\n        nonlocal counter\n        for _ in range(n):\n            with lock:\n                counter += 1\n    threads = [threading.Thread(target=worker) for _ in range(10)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_02",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 7.560235023498535,
+        "used_skill_ids": [],
+        "fixed_code": "def append_parallel(count):\n    import threading\n    result = []\n    lock = threading.Lock()\n    def worker():\n        for _ in range(count):\n            with lock:\n                result.append(1)\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return len(result)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_03",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 5.868450164794922,
+        "used_skill_ids": [],
+        "fixed_code": "def batch_increment(n):\n    import threading\n    counter = [0]\n    lock = threading.Lock()\n    def worker():\n        for _ in range(n):\n            with lock:\n                counter[0] += 1\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter[0]",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "timeout_01",
+        "error_type": "ConnectionTimeout",
+        "success": false,
+        "latency": 5.465417861938477,
+        "used_skill_ids": [],
+        "fixed_code": "def fetch_data(host, port):\n    import socket\n    s = socket.create_connection((host, port), timeout=5)\n    return s.recv(1024).decode()",
+        "eval_msg": "Test failures: got 'EXCEPTION: [Errno 61] Connection refused' expected 'Connection timeout or failed'"
+      },
+      {
+        "task_id": "timeout_02",
+        "error_type": "ConnectionTimeout",
+        "success": false,
+        "latency": 20.59523606300354,
+        "used_skill_ids": [],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"wait_for_resource\"]\n           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^\nKeyError: 'wait_for_resource'\n"
+      },
+      {
+        "task_id": "timeout_03",
+        "error_type": "ConnectionTimeout",
+        "success": true,
+        "latency": 7.830365896224976,
+        "used_skill_ids": [],
+        "fixed_code": "def check_port(host, port):\n    import socket\n    try:\n        with socket.create_connection((host, port), timeout=5):\n            return True\n    except (socket.timeout, OSError):\n        return False",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_01",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 3.7165439128875732,
+        "used_skill_ids": [],
+        "fixed_code": "def read_config(path):\n    try:\n        with open(path, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        return None",
+        "eval_msg": "Test failures: got None expected 'File not found'"
+      },
+      {
+        "task_id": "file_02",
+        "error_type": "FileNotFoundError",
+        "success": true,
+        "latency": 11.919392108917236,
+        "used_skill_ids": [],
+        "fixed_code": "def load_lines(path):\n    try:\n        with open(path) as f:\n            return f.readlines()\n    except FileNotFoundError:\n        return []",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_03",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 16.633530139923096,
+        "used_skill_ids": [],
+        "fixed_code": "def load_json(path):\n    import json\n    try:\n        with open(path) as f:\n            return json.load(f)\n    except FileNotFoundError:\n        return None",
+        "eval_msg": "Test failures: got None expected {}"
+      },
+      {
+        "task_id": "index_01",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 2.869178056716919,
+        "used_skill_ids": [],
+        "fixed_code": "def get_last(items):\n    return items[-1]",
+        "eval_msg": "Test failures: got 'EXCEPTION: list index out of range' expected None"
+      },
+      {
+        "task_id": "index_02",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 4.730093002319336,
+        "used_skill_ids": [],
+        "fixed_code": "def second_char(text):\n    if len(text) < 3:\n        return None\n    return text[2]",
+        "eval_msg": "Test failures: got None expected 'i'"
+      },
+      {
+        "task_id": "index_03",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 17.873147010803223,
+        "used_skill_ids": [],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"middle_char\"]\n           ~~~~~~~~~^^^^^^^^^^^^^^^\nKeyError: 'middle_char'\n"
+      },
+      {
+        "task_id": "loop_01",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 2.3932971954345703,
+        "used_skill_ids": [],
+        "fixed_code": "def countdown(n):\n    result = []\n    while n > 0:\n        result.append(n)\n        n -= 1\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_02",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 6.273979902267456,
+        "used_skill_ids": [],
+        "fixed_code": "def sum_until(nums, target):\n    total = 0\n    i = 0\n    while total < target and i < len(nums):\n        total += nums[i]\n        i += 1\n    return total",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_03",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 3.741581916809082,
+        "used_skill_ids": [],
+        "fixed_code": "def double_until(n, limit):\n    result = []\n    while n <= limit:\n        result.append(n)\n        n *= 2\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_01",
+        "error_type": "LogicError",
+        "success": false,
+        "latency": 4.623050689697266,
+        "used_skill_ids": [],
+        "fixed_code": "def average(nums):\n    return sum(nums) / len(nums)",
+        "eval_msg": "Test failures: got 'EXCEPTION: division by zero' expected 0.0"
+      },
+      {
+        "task_id": "logic_02",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 3.0805978775024414,
+        "used_skill_ids": [],
+        "fixed_code": "def discount_price(price, discount):\n    return price * (1 - discount / 100)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_03",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 3.412946939468384,
+        "used_skill_ids": [],
+        "fixed_code": "def factorial(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_01",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 12.836763143539429,
+        "used_skill_ids": [],
+        "fixed_code": "def get_user_name(user):\n    if not user:\n        return \"\"\n    name = user.get(\"name\")\n    if name is None:\n        return \"\"\n    return name.upper()",
+        "eval_msg": "Test failures: got '' expected 'Unknown'; got '' expected 'Unknown'"
+      },
+      {
+        "task_id": "null_02",
+        "error_type": "NullPointerException",
+        "success": true,
+        "latency": 4.36008095741272,
+        "used_skill_ids": [],
+        "fixed_code": "def get_first_item(items):\n    if items:\n        return items[0]\n    return None",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_03",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 3.813572645187378,
+        "used_skill_ids": [],
+        "fixed_code": "def get_city(user):\n    address = user.get(\"address\")\n    if address is None:\n        return None\n    return address.get(\"city\")",
+        "eval_msg": "Test failures: got None expected 'Unknown'; got \"EXCEPTION: 'NoneType' object has no attribute 'get'\" expected 'Unknown'"
+      },
+      {
+        "task_id": "leak_01",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 3.529254913330078,
+        "used_skill_ids": [],
+        "fixed_code": "def read_first_line(path):\n    with open(path, \"r\") as f:\n        return f.readline()",
+        "eval_msg": "Test failures: got \"EXCEPTION: [Errno 2] No such file or directory: '/tmp/codeskill_res_01.txt'\" expected 'hello\\n'"
+      },
+      {
+        "task_id": "leak_02",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 2.595487117767334,
+        "used_skill_ids": [],
+        "fixed_code": "def read_all(path):\n    with open(path) as f:\n        return f.readlines()",
+        "eval_msg": "Test failures: got \"EXCEPTION: [Errno 2] No such file or directory: '/tmp/codeskill_res_02.txt'\" expected ['alpha\\n', 'beta\\n']"
+      },
+      {
+        "task_id": "leak_03",
+        "error_type": "ResourceLeak",
+        "success": true,
+        "latency": 6.273832321166992,
+        "used_skill_ids": [],
+        "fixed_code": "def append_line(path, line):\n    with open(path, \"a\") as f:\n        f.write(line + \"\\n\")",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_01",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 3.826936960220337,
+        "used_skill_ids": [],
+        "fixed_code": "def format_age(age):\n    return \"Age: \" + str(age)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_02",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 2.2356929779052734,
+        "used_skill_ids": [],
+        "fixed_code": "def add_numbers(a, b):\n    return int(a) + int(b)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_03",
+        "error_type": "TypeError",
+        "success": false,
+        "latency": 20.98406171798706,
+        "used_skill_ids": [],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"larger\"]\n           ~~~~~~~~~^^^^^^^^^^\nKeyError: 'larger'\n"
+      },
+      {
+        "task_id": "zero_01",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 2.7665350437164307,
+        "used_skill_ids": [],
+        "fixed_code": "def safe_divide(a, b):\n    if b == 0:\n        return None\n    return a / b",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_02",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 3.279895782470703,
+        "used_skill_ids": [],
+        "fixed_code": "def average_positive(nums):\n    pos = [n for n in nums if n > 0]\n    if not pos:\n        return 0.0\n    return sum(pos) / len(pos)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_03",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 4.949757099151611,
+        "used_skill_ids": [],
+        "fixed_code": "def is_divisible(a, b):\n    if b == 0:\n        return False\n    return a % b == 0",
+        "eval_msg": "All tests passed"
+      }
+    ],
+    "skill_snapshots": [
+      {
+        "task_idx": 1,
+        "task_id": "race_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 2,
+        "task_id": "race_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 3,
+        "task_id": "race_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 4,
+        "task_id": "timeout_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 5,
+        "task_id": "timeout_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 6,
+        "task_id": "timeout_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 7,
+        "task_id": "file_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 8,
+        "task_id": "file_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 9,
+        "task_id": "file_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 10,
+        "task_id": "index_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 11,
+        "task_id": "index_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 12,
+        "task_id": "index_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 13,
+        "task_id": "loop_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 14,
+        "task_id": "loop_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 15,
+        "task_id": "loop_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 16,
+        "task_id": "logic_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 17,
+        "task_id": "logic_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 18,
+        "task_id": "logic_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 19,
+        "task_id": "null_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 20,
+        "task_id": "null_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 21,
+        "task_id": "null_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 22,
+        "task_id": "leak_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 23,
+        "task_id": "leak_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 24,
+        "task_id": "leak_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 25,
+        "task_id": "type_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 26,
+        "task_id": "type_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 27,
+        "task_id": "type_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 28,
+        "task_id": "zero_01",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 29,
+        "task_id": "zero_02",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 30,
+        "task_id": "zero_03",
+        "count": 0,
+        "active_count": 0,
+        "avg_success_rate": 0.0
+      }
+    ],
+    "skill_lifecycle_logs": [],
+    "final_skill_bank": []
+  },
+  "static_skill": {
+    "config": "static_skill",
+    "results": [
+      {
+        "task_id": "race_01",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 6.508522987365723,
+        "used_skill_ids": [
+          "skill_0010"
+        ],
+        "fixed_code": "def count_parallel(n):\n    import threading\n    counter = 0\n    lock = threading.Lock()\n    def worker():\n        nonlocal counter\n        for _ in range(n):\n            with lock:\n                counter += 1\n    threads = [threading.Thread(target=worker) for _ in range(10)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_02",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 6.963275909423828,
+        "used_skill_ids": [
+          "skill_0010"
+        ],
+        "fixed_code": "def append_parallel(count):\n    import threading\n    result = []\n    lock = threading.Lock()\n    def worker():\n        for _ in range(count):\n            with lock:\n                result.append(1)\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return len(result)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_03",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 7.796963214874268,
+        "used_skill_ids": [
+          "skill_0010"
+        ],
+        "fixed_code": "def batch_increment(n):\n    import threading\n    counter = [0]\n    lock = threading.Lock()\n    def worker():\n        for _ in range(n):\n            with lock:\n                counter[0] += 1\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter[0]",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "timeout_01",
+        "error_type": "ConnectionTimeout",
+        "success": false,
+        "latency": 16.395621299743652,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def fetch_data(host, port):\n    import socket\n    try:\n        with socket.create_connection((host, port), timeout=5) as s:\n            return s.recv(1024).decode()\n    except socket.timeout:\n        return \"Connection timed out\"",
+        "eval_msg": "Test failures: got 'EXCEPTION: [Errno 61] Connection refused' expected 'Connection timeout or failed'"
+      },
+      {
+        "task_id": "timeout_02",
+        "error_type": "ConnectionTimeout",
+        "success": false,
+        "latency": 18.44171714782715,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def wait_for_resource(timeout=1.0):\n    import time\n    from concurrent.futures import ThreadPoolExecutor, TimeoutError\n\n    def _blocking_wait():\n        time.sleep(10)\n        return \"ok\"\n\n    with ThreadPoolExecutor(max_workers=1) as executor:\n        future = executor.submit(_blocking_wait)\n        try:\n            return future.result(timeout=timeout)\n        except TimeoutError:\n            return \"timeout\"",
+        "eval_msg": "Timeout after 5s (likely infinite loop or hang)"
+      },
+      {
+        "task_id": "timeout_03",
+        "error_type": "ConnectionTimeout",
+        "success": true,
+        "latency": 11.660579919815063,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def check_port(host, port, timeout=5):\n    import socket\n    try:\n        with socket.create_connection((host, port), timeout=timeout):\n            return True\n    except (socket.timeout, ConnectionRefusedError, OSError):\n        return False",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_01",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 6.622228145599365,
+        "used_skill_ids": [
+          "skill_0005"
+        ],
+        "fixed_code": "def read_config(path):\n    try:\n        with open(path, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        return None",
+        "eval_msg": "Test failures: got None expected 'File not found'"
+      },
+      {
+        "task_id": "file_02",
+        "error_type": "FileNotFoundError",
+        "success": true,
+        "latency": 5.311401844024658,
+        "used_skill_ids": [
+          "skill_0005",
+          "skill_0009"
+        ],
+        "fixed_code": "def load_lines(path):\n    try:\n        with open(path, 'r') as f:\n            return f.readlines()\n    except FileNotFoundError:\n        return []",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_03",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 18.52770209312439,
+        "used_skill_ids": [],
+        "fixed_code": "```python\ndef load_json(path):\n    import json\n    try:\n        with open",
+        "eval_msg": "Runtime error:   File \"<string>\", line 4\n    ```python\n    ^\nSyntaxError: invalid syntax\n"
+      },
+      {
+        "task_id": "index_01",
+        "error_type": "IndexOutOfBounds",
+        "success": true,
+        "latency": 4.738080024719238,
+        "used_skill_ids": [
+          "skill_0002"
+        ],
+        "fixed_code": "def get_last(items):\n    if not items:\n        return None\n    return items[-1]",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "index_02",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 19.943216800689697,
+        "used_skill_ids": [
+          "skill_0002"
+        ],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"second_char\"]\n           ~~~~~~~~~^^^^^^^^^^^^^^^\nKeyError: 'second_char'\n"
+      },
+      {
+        "task_id": "index_03",
+        "error_type": "IndexOutOfBounds",
+        "success": true,
+        "latency": 6.193861246109009,
+        "used_skill_ids": [
+          "skill_0002"
+        ],
+        "fixed_code": "def middle_char(text):\n    if not text:\n        return None\n    mid = len(text) // 2\n    return text[mid]",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_01",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 4.41785192489624,
+        "used_skill_ids": [
+          "skill_0007"
+        ],
+        "fixed_code": "def countdown(n):\n    result = []\n    while n > 0:\n        result.append(n)\n        n -= 1\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_02",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 5.574683904647827,
+        "used_skill_ids": [
+          "skill_0007"
+        ],
+        "fixed_code": "def sum_until(nums, target):\n    total = 0\n    i = 0\n    while total < target and i < len(nums):\n        total += nums[i]\n        i += 1\n    return total",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_03",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 5.848995208740234,
+        "used_skill_ids": [
+          "skill_0007"
+        ],
+        "fixed_code": "def double_until(n, limit):\n    result = []\n    while n <= limit:\n        result.append(n)\n        n *= 2\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_01",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 2.8943049907684326,
+        "used_skill_ids": [
+          "skill_0008"
+        ],
+        "fixed_code": "def average(nums):\n    if not nums:\n        return 0\n    return sum(nums) / len(nums)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_02",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 3.3339388370513916,
+        "used_skill_ids": [],
+        "fixed_code": "def discount_price(price, discount):\n    return price * (1 - discount / 100)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_03",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 3.4061100482940674,
+        "used_skill_ids": [],
+        "fixed_code": "def factorial(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_01",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 11.327167987823486,
+        "used_skill_ids": [
+          "skill_0001"
+        ],
+        "fixed_code": "def get_user_name(user):\n    if user is None:\n        return \"\"\n    name = user.get(\"name\")\n    return name.upper() if name is not None else \"\"",
+        "eval_msg": "Test failures: got '' expected 'Unknown'; got '' expected 'Unknown'"
+      },
+      {
+        "task_id": "null_02",
+        "error_type": "NullPointerException",
+        "success": true,
+        "latency": 6.248466968536377,
+        "used_skill_ids": [],
+        "fixed_code": "def get_first_item(items):\n    return items[0] if items else None",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_03",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 2.6115031242370605,
+        "used_skill_ids": [
+          "skill_0001"
+        ],
+        "fixed_code": "def get_city(user):\n    return user.get(\"address\", {}).get(\"city\")",
+        "eval_msg": "Test failures: got None expected 'Unknown'; got \"EXCEPTION: 'NoneType' object has no attribute 'get'\" expected 'Unknown'"
+      },
+      {
+        "task_id": "leak_01",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 3.9101929664611816,
+        "used_skill_ids": [
+          "skill_0009"
+        ],
+        "fixed_code": "def read_first_line(path):\n    with open(path, \"r\") as f:\n        return f.readline()",
+        "eval_msg": "Test failures: got \"EXCEPTION: [Errno 2] No such file or directory: '/tmp/codeskill_res_01.txt'\" expected 'hello\\n'"
+      },
+      {
+        "task_id": "leak_02",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 23.70100712776184,
+        "used_skill_ids": [
+          "skill_0009"
+        ],
+        "fixed_code": "def read_all(path):\n    with open(path) as f:\n        return f.readlines()",
+        "eval_msg": "Test failures: got \"EXCEPTION: [Errno 2] No such file or directory: '/tmp/codeskill_res_02.txt'\" expected ['alpha\\n', 'beta\\n']"
+      },
+      {
+        "task_id": "leak_03",
+        "error_type": "ResourceLeak",
+        "success": true,
+        "latency": 3.195358991622925,
+        "used_skill_ids": [
+          "skill_0009"
+        ],
+        "fixed_code": "def append_line(path, line):\n    with open(path, \"a\") as f:\n        f.write(line + \"\\n\")",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_01",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 3.0496561527252197,
+        "used_skill_ids": [
+          "skill_0003"
+        ],
+        "fixed_code": "def format_age(age):\n    return \"Age: \" + str(age)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_02",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 4.360587120056152,
+        "used_skill_ids": [],
+        "fixed_code": "def add_numbers(a, b):\n    if isinstance(a, str):\n        a = int(a)\n    if isinstance(b, str):\n        b = int(b)\n    return a + b",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_03",
+        "error_type": "TypeError",
+        "success": false,
+        "latency": 16.751882076263428,
+        "used_skill_ids": [],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"larger\"]\n           ~~~~~~~~~^^^^^^^^^^\nKeyError: 'larger'\n"
+      },
+      {
+        "task_id": "zero_01",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 3.294600009918213,
+        "used_skill_ids": [
+          "skill_0004"
+        ],
+        "fixed_code": "def safe_divide(a, b):\n    if b == 0:\n        return None\n    return a / b",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_02",
+        "error_type": "ZeroDivisionError",
+        "success": false,
+        "latency": 5.035078287124634,
+        "used_skill_ids": [
+          "skill_0004"
+        ],
+        "fixed_code": "def average_positive(nums):\n    pos = [n for n in nums if n > 0]\n    if not pos:\n        return None\n    return sum(pos) / len(pos)",
+        "eval_msg": "Test failures: got None expected 0.0"
+      },
+      {
+        "task_id": "zero_03",
+        "error_type": "ZeroDivisionError",
+        "success": false,
+        "latency": 6.265967845916748,
+        "used_skill_ids": [
+          "skill_0004"
+        ],
+        "fixed_code": "def is_divisible(a, b):\n    if b == 0:\n        return None\n    return a % b == 0",
+        "eval_msg": "Test failures: got None expected False"
+      }
+    ],
+    "skill_snapshots": [
+      {
+        "task_idx": 1,
+        "task_id": "race_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 2,
+        "task_id": "race_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 3,
+        "task_id": "race_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 4,
+        "task_id": "timeout_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 5,
+        "task_id": "timeout_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 6,
+        "task_id": "timeout_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 7,
+        "task_id": "file_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 8,
+        "task_id": "file_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 9,
+        "task_id": "file_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 10,
+        "task_id": "index_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 11,
+        "task_id": "index_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 12,
+        "task_id": "index_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 13,
+        "task_id": "loop_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 14,
+        "task_id": "loop_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 15,
+        "task_id": "loop_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 16,
+        "task_id": "logic_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 17,
+        "task_id": "logic_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 18,
+        "task_id": "logic_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 19,
+        "task_id": "null_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 20,
+        "task_id": "null_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 21,
+        "task_id": "null_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 22,
+        "task_id": "leak_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 23,
+        "task_id": "leak_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 24,
+        "task_id": "leak_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 25,
+        "task_id": "type_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 26,
+        "task_id": "type_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 27,
+        "task_id": "type_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 28,
+        "task_id": "zero_01",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 29,
+        "task_id": "zero_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 30,
+        "task_id": "zero_03",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.0
+      }
+    ],
+    "skill_lifecycle_logs": [],
+    "final_skill_bank": [
+      {
+        "skill_id": "skill_0001",
+        "trigger_condition": "Handle None or missing key before accessing attributes or dictionary values",
+        "steps": [
+          "Check if the variable is None before use",
+          "Use .get() or try/except for missing keys",
+          "Return a default value when unavailable"
+        ],
+        "expected_effect": "Avoid AttributeError/KeyError on None or missing fields",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895028",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0002",
+        "trigger_condition": "Check list bounds before indexing",
+        "steps": [
+          "Verify the index is within valid range",
+          "Handle empty collections by returning None or a default",
+          "Use negative indexing or len() checks"
+        ],
+        "expected_effect": "Avoid IndexError on out-of-range access",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895043",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0003",
+        "trigger_condition": "Convert operands to compatible types before string concatenation or arithmetic",
+        "steps": [
+          "Identify the expected type of each operand",
+          "Convert using int(), str(), float() as needed",
+          "Validate conversion with try/except if input is untrusted"
+        ],
+        "expected_effect": "Avoid TypeError from incompatible operand types",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895046",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0004",
+        "trigger_condition": "Guard against division by zero",
+        "steps": [
+          "Check if the denominator is zero before dividing",
+          "Return None or a default value when zero",
+          "Handle empty aggregates before averaging"
+        ],
+        "expected_effect": "Avoid ZeroDivisionError",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895047",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0005",
+        "trigger_condition": "Check file existence or wrap file operations in try/except",
+        "steps": [
+          "Use os.path.exists() or try/except FileNotFoundError",
+          "Return a graceful error message or default value",
+          "Ensure file handles are closed"
+        ],
+        "expected_effect": "Avoid FileNotFoundError crashes",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895049",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0006",
+        "trigger_condition": "Set timeouts on network or blocking operations",
+        "steps": [
+          "Add timeout parameter to socket/requests calls",
+          "Catch timeout exceptions",
+          "Return a fallback message on failure"
+        ],
+        "expected_effect": "Avoid indefinite hangs on unreachable resources",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895050",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0007",
+        "trigger_condition": "Ensure loop variables progress toward termination",
+        "steps": [
+          "Verify every loop has a decrement/increment/update",
+          "Check exit conditions before entering the loop",
+          "Add safeguards for edge cases"
+        ],
+        "expected_effect": "Avoid infinite loops",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895052",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0008",
+        "trigger_condition": "Verify arithmetic and aggregation formulas for correctness",
+        "steps": [
+          "Check whether division, multiplication, or percentage is needed",
+          "Handle empty input gracefully",
+          "Compare result against expected semantics"
+        ],
+        "expected_effect": "Fix logic errors in calculations",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895053",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0009",
+        "trigger_condition": "Use context managers for file and resource handles",
+        "steps": [
+          "Replace raw open() with 'with open(...)'",
+          "Ensure close() is called in finally blocks",
+          "Avoid leaking file descriptors or sockets"
+        ],
+        "expected_effect": "Prevent resource leaks",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895054",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0010",
+        "trigger_condition": "Protect shared state with locks in multi-threaded code",
+        "steps": [
+          "Identify shared mutable variables",
+          "Use threading.Lock around read-modify-write operations",
+          "Acquire and release locks correctly"
+        ],
+        "expected_effect": "Avoid race conditions",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:33:04.895056",
+        "deprecated": false
+      }
+    ]
+  },
+  "codeskill": {
+    "config": "codeskill",
+    "results": [
+      {
+        "task_id": "race_01",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 6.991066217422485,
+        "used_skill_ids": [],
+        "fixed_code": "def count_parallel(n):\n    import threading\n    counter = 0\n    lock = threading.Lock()\n    def worker():\n        nonlocal counter\n        for _ in range(n):\n            with lock:\n                counter += 1\n    threads = [threading.Thread(target=worker) for _ in range(10)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_02",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 5.0835120677948,
+        "used_skill_ids": [
+          "skill_0001"
+        ],
+        "fixed_code": "def append_parallel(count):\n    import threading\n    result = []\n    lock = threading.Lock()\n    def worker():\n        for _ in range(count):\n            with lock:\n                result.append(1)\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return len(result)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "race_03",
+        "error_type": "ConcurrencyRace",
+        "success": true,
+        "latency": 5.942670822143555,
+        "used_skill_ids": [
+          "skill_0001",
+          "skill_0002"
+        ],
+        "fixed_code": "def batch_increment(n):\n    import threading\n    counter = [0]\n    lock = threading.Lock()\n    def worker():\n        for _ in range(n):\n            with lock:\n                counter[0] += 1\n    threads = [threading.Thread(target=worker) for _ in range(5)]\n    for t in threads:\n        t.start()\n    for t in threads:\n        t.join()\n    return counter[0]",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "timeout_01",
+        "error_type": "ConnectionTimeout",
+        "success": false,
+        "latency": 6.0498270988464355,
+        "used_skill_ids": [],
+        "fixed_code": "def fetch_data(host, port):\n    import socket\n    with socket.create_connection((host, port), timeout=5) as s:\n        return s.recv(1024).decode()",
+        "eval_msg": "Test failures: got 'EXCEPTION: [Errno 61] Connection refused' expected 'Connection timeout or failed'"
+      },
+      {
+        "task_id": "timeout_02",
+        "error_type": "ConnectionTimeout",
+        "success": true,
+        "latency": 5.6273839473724365,
+        "used_skill_ids": [],
+        "fixed_code": "def wait_for_resource():\n    return \"ok\"",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "timeout_03",
+        "error_type": "ConnectionTimeout",
+        "success": true,
+        "latency": 4.638214111328125,
+        "used_skill_ids": [
+          "skill_0004"
+        ],
+        "fixed_code": "def check_port(host, port):\n    import socket\n    try:\n        s = socket.create_connection((host, port), timeout=5)\n        s.close()\n        return True\n    except (socket.timeout, socket.error, ConnectionRefusedError):\n        return False",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_01",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 4.255651950836182,
+        "used_skill_ids": [],
+        "fixed_code": "def read_config(path):\n    try:\n        with open(path, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        return None",
+        "eval_msg": "Test failures: got None expected 'File not found'"
+      },
+      {
+        "task_id": "file_02",
+        "error_type": "FileNotFoundError",
+        "success": true,
+        "latency": 5.812639951705933,
+        "used_skill_ids": [],
+        "fixed_code": "def load_lines(path):\n    try:\n        with open(path) as f:\n            return f.readlines()\n    except FileNotFoundError:\n        return []",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "file_03",
+        "error_type": "FileNotFoundError",
+        "success": false,
+        "latency": 3.890133857727051,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def load_json(path):\n    import json\n    try:\n        with open(path) as f:\n            return json.load(f)\n    except FileNotFoundError:\n        return None",
+        "eval_msg": "Test failures: got None expected {}"
+      },
+      {
+        "task_id": "index_01",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 4.557196140289307,
+        "used_skill_ids": [],
+        "fixed_code": "def get_last(items):\n    return items[len(items) - 1]",
+        "eval_msg": "Test failures: got 'EXCEPTION: list index out of range' expected None"
+      },
+      {
+        "task_id": "index_02",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 4.420583248138428,
+        "used_skill_ids": [],
+        "fixed_code": "def second_char(text):\n    if len(text) < 3:\n        return None\n    return text[2]",
+        "eval_msg": "Test failures: got None expected 'i'"
+      },
+      {
+        "task_id": "index_03",
+        "error_type": "IndexOutOfBounds",
+        "success": false,
+        "latency": 9.049113988876343,
+        "used_skill_ids": [],
+        "fixed_code": "def middle_char(text):\n    mid = len(text) // 2\n    return text[mid]",
+        "eval_msg": "Test failures: got 'EXCEPTION: string index out of range' expected None"
+      },
+      {
+        "task_id": "loop_01",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 3.7755861282348633,
+        "used_skill_ids": [],
+        "fixed_code": "def countdown(n):\n    result = []\n    while n > 0:\n        result.append(n)\n        n -= 1\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_02",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 6.1863319873809814,
+        "used_skill_ids": [
+          "skill_0007"
+        ],
+        "fixed_code": "def sum_until(nums, target):\n    total = 0\n    i = 0\n    while total < target and i < len(nums):\n        total += nums[i]\n        i += 1\n    return total",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "loop_03",
+        "error_type": "InfiniteLoop",
+        "success": true,
+        "latency": 3.6387939453125,
+        "used_skill_ids": [
+          "skill_0007",
+          "skill_0008"
+        ],
+        "fixed_code": "def double_until(n, limit):\n    result = []\n    while n <= limit:\n        result.append(n)\n        n *= 2\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_01",
+        "error_type": "LogicError",
+        "success": false,
+        "latency": 4.689856052398682,
+        "used_skill_ids": [
+          "skill_0008"
+        ],
+        "fixed_code": "def average(nums):\n    return sum(nums) / len(nums)",
+        "eval_msg": "Test failures: got 'EXCEPTION: division by zero' expected 0.0"
+      },
+      {
+        "task_id": "logic_02",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 5.101193904876709,
+        "used_skill_ids": [
+          "skill_0008"
+        ],
+        "fixed_code": "def discount_price(price, discount):\n    return price * (1 - discount / 100)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "logic_03",
+        "error_type": "LogicError",
+        "success": true,
+        "latency": 4.912786960601807,
+        "used_skill_ids": [
+          "skill_0010",
+          "skill_0008"
+        ],
+        "fixed_code": "def factorial(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_01",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 8.873739004135132,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def get_user_name(user):\n    if user is None or \"name\" not in user:\n        return None\n    return user[\"name\"].upper()",
+        "eval_msg": "Test failures: got None expected 'Unknown'; got None expected 'Unknown'"
+      },
+      {
+        "task_id": "null_02",
+        "error_type": "NullPointerException",
+        "success": true,
+        "latency": 2.7402849197387695,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def get_first_item(items):\n    if items:\n        return items[0]\n    return None",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "null_03",
+        "error_type": "NullPointerException",
+        "success": false,
+        "latency": 6.1102399826049805,
+        "used_skill_ids": [
+          "skill_0012"
+        ],
+        "fixed_code": "def get_city(user):\n    if not user:\n        return None\n    address = user.get(\"address\")\n    if not isinstance(address, dict):\n        return None\n    return address.get(\"city\")",
+        "eval_msg": "Test failures: got None expected 'Unknown'; got None expected 'Unknown'"
+      },
+      {
+        "task_id": "leak_01",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 7.763519048690796,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def read_first_line(path):\n    try:\n        with open(path, \"r\") as f:\n            return f.readline()\n    except FileNotFoundError:\n        return \"\"",
+        "eval_msg": "Test failures: got '' expected 'hello\\n'"
+      },
+      {
+        "task_id": "leak_02",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 3.990635871887207,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "def read_all(path):\n    try:\n        with open(path) as f:\n            lines = f.readlines()\n        return lines\n    except FileNotFoundError:\n        return []",
+        "eval_msg": "Test failures: got [] expected ['alpha\\n', 'beta\\n']"
+      },
+      {
+        "task_id": "leak_03",
+        "error_type": "ResourceLeak",
+        "success": false,
+        "latency": 19.85289978981018,
+        "used_skill_ids": [
+          "skill_0006"
+        ],
+        "fixed_code": "",
+        "eval_msg": "Runtime error: Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\n    func = globals()[\"append_line\"]\n           ~~~~~~~~~^^^^^^^^^^^^^^^\nKeyError: 'append_line'\n"
+      },
+      {
+        "task_id": "type_01",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 3.7642548084259033,
+        "used_skill_ids": [
+          "skill_0007",
+          "skill_0012"
+        ],
+        "fixed_code": "def format_age(age):\n    return \"Age: \" + str(age)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_02",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 3.471378803253174,
+        "used_skill_ids": [
+          "skill_0013",
+          "skill_0010",
+          "skill_0012"
+        ],
+        "fixed_code": "def add_numbers(a, b):\n    return int(a) + int(b)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "type_03",
+        "error_type": "TypeError",
+        "success": true,
+        "latency": 17.496976137161255,
+        "used_skill_ids": [
+          "skill_0014",
+          "skill_0013",
+          "skill_0012"
+        ],
+        "fixed_code": "def larger(a, b):\n    def _to_number(x):\n        if isinstance(x, (int, float)):\n            return x\n        try:\n            return int(x)\n        except (ValueError, TypeError):\n            try:\n                return float(x)\n            except (ValueError, TypeError):\n                return None\n\n    num_a = _to_number(a)\n    num_b = _to_number(b)\n    if num_a is None or num_b is None:\n        return None\n    return max(num_a, num_b)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_01",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 7.4099907875061035,
+        "used_skill_ids": [
+          "skill_0015",
+          "skill_0009"
+        ],
+        "fixed_code": "def safe_divide(a, b):\n    if b == 0:\n        return None\n    return a / b",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_02",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 11.25798487663269,
+        "used_skill_ids": [
+          "skill_0016",
+          "skill_0015",
+          "skill_0009",
+          "skill_0008",
+          "skill_0007"
+        ],
+        "fixed_code": "def average_positive(nums):\n    pos = [n for n in nums if n > 0]\n    if not pos:\n        return 0\n    return sum(pos) / len(pos)",
+        "eval_msg": "All tests passed"
+      },
+      {
+        "task_id": "zero_03",
+        "error_type": "ZeroDivisionError",
+        "success": true,
+        "latency": 8.589041709899902,
+        "used_skill_ids": [
+          "skill_0016",
+          "skill_0017"
+        ],
+        "fixed_code": "def is_divisible(a, b):\n    if b == 0:\n        return False\n    return a % b == 0",
+        "eval_msg": "All tests passed"
+      }
+    ],
+    "skill_snapshots": [
+      {
+        "task_idx": 1,
+        "task_id": "race_01",
+        "count": 1,
+        "active_count": 1,
+        "avg_success_rate": 0.0
+      },
+      {
+        "task_idx": 2,
+        "task_id": "race_02",
+        "count": 2,
+        "active_count": 2,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 3,
+        "task_id": "race_03",
+        "count": 3,
+        "active_count": 3,
+        "avg_success_rate": 0.6666666666666666
+      },
+      {
+        "task_idx": 4,
+        "task_id": "timeout_01",
+        "count": 3,
+        "active_count": 3,
+        "avg_success_rate": 0.6666666666666666
+      },
+      {
+        "task_idx": 5,
+        "task_id": "timeout_02",
+        "count": 4,
+        "active_count": 4,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 6,
+        "task_id": "timeout_03",
+        "count": 5,
+        "active_count": 5,
+        "avg_success_rate": 0.6
+      },
+      {
+        "task_idx": 7,
+        "task_id": "file_01",
+        "count": 5,
+        "active_count": 5,
+        "avg_success_rate": 0.6
+      },
+      {
+        "task_idx": 8,
+        "task_id": "file_02",
+        "count": 6,
+        "active_count": 6,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 9,
+        "task_id": "file_03",
+        "count": 6,
+        "active_count": 6,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 10,
+        "task_id": "index_01",
+        "count": 6,
+        "active_count": 6,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 11,
+        "task_id": "index_02",
+        "count": 6,
+        "active_count": 6,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 12,
+        "task_id": "index_03",
+        "count": 6,
+        "active_count": 6,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 13,
+        "task_id": "loop_01",
+        "count": 7,
+        "active_count": 7,
+        "avg_success_rate": 0.42857142857142855
+      },
+      {
+        "task_idx": 14,
+        "task_id": "loop_02",
+        "count": 8,
+        "active_count": 8,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 15,
+        "task_id": "loop_03",
+        "count": 9,
+        "active_count": 9,
+        "avg_success_rate": 0.5555555555555556
+      },
+      {
+        "task_idx": 16,
+        "task_id": "logic_01",
+        "count": 9,
+        "active_count": 9,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 17,
+        "task_id": "logic_02",
+        "count": 10,
+        "active_count": 10,
+        "avg_success_rate": 0.4666666666666666
+      },
+      {
+        "task_idx": 18,
+        "task_id": "logic_03",
+        "count": 11,
+        "active_count": 11,
+        "avg_success_rate": 0.5227272727272727
+      },
+      {
+        "task_idx": 19,
+        "task_id": "null_01",
+        "count": 11,
+        "active_count": 11,
+        "avg_success_rate": 0.5227272727272727
+      },
+      {
+        "task_idx": 20,
+        "task_id": "null_02",
+        "count": 12,
+        "active_count": 12,
+        "avg_success_rate": 0.5069444444444445
+      },
+      {
+        "task_idx": 21,
+        "task_id": "null_03",
+        "count": 12,
+        "active_count": 12,
+        "avg_success_rate": 0.5069444444444445
+      },
+      {
+        "task_idx": 22,
+        "task_id": "leak_01",
+        "count": 12,
+        "active_count": 12,
+        "avg_success_rate": 0.5
+      },
+      {
+        "task_idx": 23,
+        "task_id": "leak_02",
+        "count": 12,
+        "active_count": 12,
+        "avg_success_rate": 0.49583333333333335
+      },
+      {
+        "task_idx": 24,
+        "task_id": "leak_03",
+        "count": 12,
+        "active_count": 12,
+        "avg_success_rate": 0.4930555555555556
+      },
+      {
+        "task_idx": 25,
+        "task_id": "type_01",
+        "count": 13,
+        "active_count": 13,
+        "avg_success_rate": 0.4935897435897436
+      },
+      {
+        "task_idx": 26,
+        "task_id": "type_02",
+        "count": 14,
+        "active_count": 14,
+        "avg_success_rate": 0.5416666666666667
+      },
+      {
+        "task_idx": 27,
+        "task_id": "type_03",
+        "count": 15,
+        "active_count": 15,
+        "avg_success_rate": 0.5777777777777778
+      },
+      {
+        "task_idx": 28,
+        "task_id": "zero_01",
+        "count": 16,
+        "active_count": 16,
+        "avg_success_rate": 0.6666666666666667
+      },
+      {
+        "task_idx": 29,
+        "task_id": "zero_02",
+        "count": 17,
+        "active_count": 17,
+        "avg_success_rate": 0.6892156862745098
+      },
+      {
+        "task_idx": 30,
+        "task_id": "zero_03",
+        "count": 18,
+        "active_count": 17,
+        "avg_success_rate": 0.7382352941176471
+      }
+    ],
+    "skill_lifecycle_logs": [
+      {
+        "event": "created",
+        "task_id": "race_01",
+        "skill_id": "skill_0001",
+        "trigger": "Multiple threads read and/or write the same mutable shared state, especially during non-atomic read-modify-write operations like incrementing a counter."
+      },
+      {
+        "event": "created",
+        "task_id": "race_02",
+        "skill_id": "skill_0002",
+        "trigger": "Multiple threads mutate a shared mutable collection (e.g., list, dict) by calling methods that are not guaranteed to be atomic, such as list.append, list.extend, list.pop, or dict.update, and the program relies on the final collection state."
+      },
+      {
+        "event": "created",
+        "task_id": "race_03",
+        "skill_id": "skill_0003",
+        "trigger": "When encountering concurrencyrace: List element used as shared counter without lock."
+      },
+      {
+        "event": "created",
+        "task_id": "timeout_02",
+        "skill_id": "skill_0004",
+        "trigger": "A function or method contains an unnecessary blocking delay (e.g., time.sleep, synchronous wait, or artificial pause) that is not required for correctness and causes callers to exceed connection or response timeouts."
+      },
+      {
+        "event": "created",
+        "task_id": "timeout_03",
+        "skill_id": "skill_0005",
+        "trigger": "A function makes a blocking network or socket connection (e.g., socket.create_connection, socket.connect, or similar) without an explicit timeout, which can hang indefinitely when the target host or port is unreachable, closed, or unresponsive."
+      },
+      {
+        "event": "created",
+        "task_id": "file_02",
+        "skill_id": "skill_0006",
+        "trigger": "A function opens a file by path and either crashes with FileNotFoundError when the file is missing, leaks a file handle because it does not close the descriptor, or both."
+      },
+      {
+        "event": "created",
+        "task_id": "loop_01",
+        "skill_id": "skill_0007",
+        "trigger": "A loop (while/for) depends on a condition variable that is never advanced inside the loop body, causing an infinite loop."
+      },
+      {
+        "event": "created",
+        "task_id": "loop_02",
+        "skill_id": "skill_0008",
+        "trigger": "A while loop traverses a sequence by index (e.g., nums[i]) but the loop condition only checks an accumulator or logical target, and the index is not advanced, causing an infinite loop and/or an IndexError when the target is not reached before the sequence ends."
+      },
+      {
+        "event": "created",
+        "task_id": "loop_03",
+        "skill_id": "skill_0009",
+        "trigger": "When encountering infiniteloop: Increment is zero, so loop never terminates."
+      },
+      {
+        "event": "created",
+        "task_id": "logic_02",
+        "skill_id": "skill_0010",
+        "trigger": "A function receives a numeric argument intended to represent a percentage or rate (e.g., 20 means 20%), but the implementation treats it as an absolute quantity or raw fraction, producing incorrect proportional results."
+      },
+      {
+        "event": "created",
+        "task_id": "logic_03",
+        "skill_id": "skill_0011",
+        "trigger": "An aggregating computation produces incorrect results because the accumulator is initialized to the wrong identity value, or the loop/update combines elements with the wrong operator (e.g., summing instead of multiplying, or vice versa)."
+      },
+      {
+        "event": "created",
+        "task_id": "null_02",
+        "skill_id": "skill_0012",
+        "trigger": "A function receives a collection, sequence, or optional object and accesses an element, attribute, or method on it without first verifying that the input is non-null and non-empty, resulting in TypeError, IndexError, AttributeError, or similar null-pointer crashes."
+      },
+      {
+        "event": "created",
+        "task_id": "type_01",
+        "skill_id": "skill_0013",
+        "trigger": "A string is built by concatenating a literal or another string with a value of a non-string type (e.g., int, float, object), raising a TypeError because the language does not coerce non-strings to strings during concatenation."
+      },
+      {
+        "event": "created",
+        "task_id": "type_02",
+        "skill_id": "skill_0014",
+        "trigger": "A function performs arithmetic, comparison, or other numeric operations on inputs that may arrive as strings representing numbers (e.g., from user input, JSON, or network payloads), causing TypeError or semantically wrong results."
+      },
+      {
+        "event": "created",
+        "task_id": "type_03",
+        "skill_id": "skill_0015",
+        "trigger": "When encountering typeerror: Comparing string and int with max raises TypeError."
+      },
+      {
+        "event": "created",
+        "task_id": "zero_01",
+        "skill_id": "skill_0016",
+        "trigger": "A function or expression performs division, modulo, or another arithmetic operation that has a divisor, and the divisor may be zero, causing ZeroDivisionError."
+      },
+      {
+        "event": "created",
+        "task_id": "zero_02",
+        "skill_id": "skill_0017",
+        "trigger": "When encountering zerodivisionerror: If no positive numbers exist, len(pos) is zero."
+      },
+      {
+        "event": "created",
+        "task_id": "zero_03",
+        "skill_id": "skill_0018",
+        "trigger": "When encountering zerodivisionerror: Modulo by zero raises ZeroDivisionError."
+      }
+    ],
+    "final_skill_bank": [
+      {
+        "skill_id": "skill_0001",
+        "trigger_condition": "Multiple threads read and/or write the same mutable shared state, especially during non-atomic read-modify-write operations like incrementing a counter.",
+        "steps": [
+          "Identify all shared mutable variables that are accessed by more than one thread.",
+          "Choose a synchronization primitive (e.g., threading.Lock) and guard every read-modify-write sequence involving the shared state with an acquire/release block so the critical section executes atomically."
+        ],
+        "expected_effect": "Eliminates lost updates and other race conditions by ensuring only one thread at a time mutates the shared state, producing deterministic, correct results.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:41:45.601307",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0002",
+        "trigger_condition": "Multiple threads mutate a shared mutable collection (e.g., list, dict) by calling methods that are not guaranteed to be atomic, such as list.append, list.extend, list.pop, or dict.update, and the program relies on the final collection state.",
+        "steps": [
+          "Identify the shared collection object and all threads that access it.",
+          "Create a single threading.Lock that is visible to every thread.",
+          "Wrap every mutating operation on the shared collection with the lock using a with statement so that only one thread can mutate the collection at a time."
+        ],
+        "expected_effect": "The collection is modified serially across threads, preventing lost updates, corrupted structure, and incorrect final counts or contents.",
+        "success_count": 1,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:41:45.601307",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0003",
+        "trigger_condition": "When encountering concurrencyrace: List element used as shared counter without lock.",
+        "steps": [
+          "Identify the problematic pattern in the buggy code.",
+          "Remove or replace the unsafe pattern: counter[0] += 1",
+          "Apply the safe fix: lock = threading.Lock()",
+          "Verify the fix with the provided test cases."
+        ],
+        "expected_effect": "The code handles concurrencyrace gracefully and passes all tests.",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:41:45.494917",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0004",
+        "trigger_condition": "A function or method contains an unnecessary blocking delay (e.g., time.sleep, synchronous wait, or artificial pause) that is not required for correctness and causes callers to exceed connection or response timeouts.",
+        "steps": [
+          "Locate the blocking or delay call and determine whether the wait is essential to the function's result (e.g., waiting for a real external condition) or merely an unneeded leftover.",
+          "Remove or reduce the non-essential delay, or replace it with a bounded, non-blocking, or polling-based alternative if a short wait is genuinely required.",
+          "Verify that callers now receive a quick response and that the existing test suite still passes."
+        ],
+        "expected_effect": "The function returns promptly without causing connection timeouts, while preserving correct behavior for all test cases.",
+        "success_count": 1,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:42:40.008249",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0005",
+        "trigger_condition": "A function makes a blocking network or socket connection (e.g., socket.create_connection, socket.connect, or similar) without an explicit timeout, which can hang indefinitely when the target host or port is unreachable, closed, or unresponsive.",
+        "steps": [
+          "Locate the blocking network call and determine its default timeout behavior (often None or infinite).",
+          "Add a finite, context-appropriate timeout argument to the connection call (e.g., timeout=5).",
+          "Wrap the connection attempt and any subsequent I/O in a try/except that catches timeout-related and network-level exceptions (e.g., socket.timeout, socket.error, ConnectionRefusedError, OSError).",
+          "Ensure the socket or connection object is explicitly closed after a successful open and in failure paths, such as by using s.close() or a context manager/finally block.",
+          "Return a sensible result for failure (e.g., False or None) or raise a domain-specific error instead of propagating raw socket exceptions."
+        ],
+        "expected_effect": "The operation fails fast within a bounded time when the target is unreachable, avoids indefinite hangs, releases network resources reliably, and produces deterministic behavior for callers and tests.",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:42:40.007539",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0006",
+        "trigger_condition": "A function opens a file by path and either crashes with FileNotFoundError when the file is missing, leaks a file handle because it does not close the descriptor, or both.",
+        "steps": [
+          "Replace the bare open call with a with statement so the file descriptor is automatically closed even if an exception occurs.",
+          "Wrap the file operation in a try/except FileNotFoundError block.",
+          "In the exception handler, return a sensible default value for the use case (e.g., an empty list, empty string, None, or an empty dict) instead of propagating the raw FileNotFoundError.",
+          "Verify the function with tests that include the missing-file case and the successful-read case."
+        ],
+        "expected_effect": "The function handles missing files gracefully without leaking file handles, returns a consistent default value, and passes all test cases including the missing-file path.",
+        "success_count": 1,
+        "failure_count": 5,
+        "last_used_timestamp": "2026-07-17T08:47:17.024719",
+        "deprecated": true
+      },
+      {
+        "skill_id": "skill_0007",
+        "trigger_condition": "A loop (while/for) depends on a condition variable that is never advanced inside the loop body, causing an infinite loop.",
+        "steps": [
+          "Identify every variable that appears in the loop condition and determines when the loop should stop.",
+          "Ensure that at least one of those variables is modified inside the loop body on every execution path so that the condition moves closer to becoming false.",
+          "Verify that the update has the correct direction and magnitude (e.g., decrementing toward zero, incrementing toward a bound) and that no continue or branch bypasses it."
+        ],
+        "expected_effect": "The loop makes progress toward termination on every iteration and exits as expected, eliminating infinite loops while preserving the intended computation.",
+        "success_count": 4,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:00.273302",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0008",
+        "trigger_condition": "A while loop traverses a sequence by index (e.g., nums[i]) but the loop condition only checks an accumulator or logical target, and the index is not advanced, causing an infinite loop and/or an IndexError when the target is not reached before the sequence ends.",
+        "steps": [
+          "Identify the index variable used to access sequence elements and the length of the sequence.",
+          "Add a bound check such as i < len(sequence) to the while condition so indexing stops at the last element.",
+          "Update the index (e.g., i += 1) inside the loop body on every execution path.",
+          "Decide how to handle the case where the sequence is exhausted before the target condition is met (e.g., return the current result, break, or raise)."
+        ],
+        "expected_effect": "The loop terminates when the target is reached or when the sequence ends, preventing infinite loops and index-out-of-bounds errors while preserving the intended computation.",
+        "success_count": 4,
+        "failure_count": 1,
+        "last_used_timestamp": "2026-07-17T08:50:00.273302",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0009",
+        "trigger_condition": "When encountering infiniteloop: Increment is zero, so loop never terminates.",
+        "steps": [
+          "Identify the problematic pattern in the buggy code.",
+          "Remove or replace the unsafe pattern: n += 0",
+          "Apply the safe fix: n *= 2",
+          "Verify the fix with the provided test cases."
+        ],
+        "expected_effect": "The code handles infiniteloop gracefully and passes all tests.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:00.273302",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0010",
+        "trigger_condition": "A function receives a numeric argument intended to represent a percentage or rate (e.g., 20 means 20%), but the implementation treats it as an absolute quantity or raw fraction, producing incorrect proportional results.",
+        "steps": [
+          "Confirm the semantic meaning of the parameter: determine whether it is a percentage of a base value rather than an absolute offset or a fraction in [0, 1].",
+          "Convert the percentage to a fractional multiplier by dividing by 100 (e.g., 20% becomes 0.2).",
+          "Apply the multiplier to the base value instead of adding or subtracting the raw number; for example, compute a discounted value as base * (1 - percentage / 100).",
+          "Verify with representative tests covering edge cases such as 0%, 100%, and intermediate values."
+        ],
+        "expected_effect": "The calculation correctly interprets percentage arguments as proportional fractions of the base value, producing the right magnitude and passing all tests.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:48:02.350758",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0011",
+        "trigger_condition": "An aggregating computation produces incorrect results because the accumulator is initialized to the wrong identity value, or the loop/update combines elements with the wrong operator (e.g., summing instead of multiplying, or vice versa).",
+        "steps": [
+          "Identify the intended reduction or aggregation (e.g., product, sum, min, max, intersection, union) and the corresponding mathematical identity element.",
+          "Inspect the accumulator's initial value and the operator used inside the loop or recursion; ensure they match the chosen reduction (e.g., 1 for multiplication, 0 for addition, an empty list for concatenation, infinity for min).",
+          "Replace the mismatched initial value or operator with the correct pair, and add/update tests that verify the expected result for the aggregation."
+        ],
+        "expected_effect": "The accumulation uses the correct identity element and combining operator, producing the intended mathematical result for all inputs and passing the relevant test cases.",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:46:08.006755",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0012",
+        "trigger_condition": "A function receives a collection, sequence, or optional object and accesses an element, attribute, or method on it without first verifying that the input is non-null and non-empty, resulting in TypeError, IndexError, AttributeError, or similar null-pointer crashes.",
+        "steps": [
+          "Identify the point where the input is dereferenced (e.g., indexing, attribute access, or method call) and determine what valid inputs look like.",
+          "Add a guard clause at the start of the function or before the access that checks whether the input is truthy or otherwise valid; handle None and empty collections explicitly.",
+          "Return a sensible default value for the null/empty case, such as None, an empty collection, zero, or a domain-specific sentinel.",
+          "Verify the fix with tests covering the null case, the empty case, and representative valid inputs."
+        ],
+        "expected_effect": "The function no longer crashes on null or empty inputs; it returns a consistent, appropriate default and passes all tests including edge cases.",
+        "success_count": 3,
+        "failure_count": 1,
+        "last_used_timestamp": "2026-07-17T08:49:01.282090",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0013",
+        "trigger_condition": "A string is built by concatenating a literal or another string with a value of a non-string type (e.g., int, float, object), raising a TypeError because the language does not coerce non-strings to strings during concatenation.",
+        "steps": [
+          "Locate the concatenation or formatting expression that mixes strings with non-string values.",
+          "Determine the intended textual representation of each non-string operand and convert it explicitly (e.g., using str(value), repr(value), or a formatting method such as f-strings or string format) before combining it with the string.",
+          "Verify the fix with tests covering representative non-string types and any edge cases (e.g., negative numbers, zero, objects)."
+        ],
+        "expected_effect": "The string construction succeeds for all expected input types, the TypeError is eliminated, and the output contains the correct textual representation of each value.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:49:01.282090",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0014",
+        "trigger_condition": "A function performs arithmetic, comparison, or other numeric operations on inputs that may arrive as strings representing numbers (e.g., from user input, JSON, or network payloads), causing TypeError or semantically wrong results.",
+        "steps": [
+          "Identify the parameters used in numeric operations and determine the expected numeric type (e.g., int, float, or Decimal).",
+          "At the start of the function or immediately before each numeric operation, convert the inputs to the expected numeric type using int(value), float(value), or an equivalent constructor.",
+          "If the input may be invalid or non-numeric, wrap the conversion in a try/except for ValueError/TypeError and return a sensible default, None, or raise a domain-specific error instead of propagating the raw exception.",
+          "Verify the function with tests that use both native numeric values and numeric strings, as well as any relevant edge cases."
+        ],
+        "expected_effect": "The function treats numeric-string inputs equivalently to native numeric inputs, eliminating TypeError and producing correct numeric results for all supported inputs.",
+        "success_count": 1,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:49:01.282090",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0015",
+        "trigger_condition": "When encountering typeerror: Comparing string and int with max raises TypeError.",
+        "steps": [
+          "Identify the problematic pattern in the buggy code.",
+          "Remove or replace the unsafe pattern: return max(a, b)",
+          "Apply the safe fix: def _to_number(x):",
+          "Verify the fix with the provided test cases."
+        ],
+        "expected_effect": "The code handles typeerror gracefully and passes all tests.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:00.273302",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0016",
+        "trigger_condition": "A function or expression performs division, modulo, or another arithmetic operation that has a divisor, and the divisor may be zero, causing ZeroDivisionError.",
+        "steps": [
+          "Identify the divisor expression in the division or modulo operation and determine whether it can be zero for valid inputs.",
+          "Add a guard clause immediately before the operation that checks whether the divisor is zero; in that case, return a sensible default value (e.g., None, 0, or a sentinel) or raise a domain-specific exception instead of allowing the raw ZeroDivisionError to propagate.",
+          "Verify the fix with tests that include a zero divisor case and representative non-zero divisor cases."
+        ],
+        "expected_effect": "The operation handles a zero divisor gracefully without raising ZeroDivisionError, returns a consistent or domain-appropriate result, and passes all test cases including the zero-divisor edge case.",
+        "success_count": 2,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:27.119966",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0017",
+        "trigger_condition": "When encountering zerodivisionerror: If no positive numbers exist, len(pos) is zero.",
+        "steps": [
+          "Identify the problematic pattern in the buggy code.",
+          "Apply the safe fix: if not pos:",
+          "Verify the fix with the provided test cases."
+        ],
+        "expected_effect": "The code handles zerodivisionerror gracefully and passes all tests.",
+        "success_count": 1,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:27.119966",
+        "deprecated": false
+      },
+      {
+        "skill_id": "skill_0018",
+        "trigger_condition": "When encountering zerodivisionerror: Modulo by zero raises ZeroDivisionError.",
+        "steps": [
+          "Identify the problematic pattern in the buggy code.",
+          "Apply the safe fix: if b == 0:",
+          "Verify the fix with the provided test cases."
+        ],
+        "expected_effect": "The code handles zerodivisionerror gracefully and passes all tests.",
+        "success_count": 0,
+        "failure_count": 0,
+        "last_used_timestamp": "2026-07-17T08:50:26.892084",
+        "deprecated": false
+      }
+    ]
+  }
+}

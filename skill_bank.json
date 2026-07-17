@@ -1,0 +1,267 @@
+{
+  "skills": [
+    {
+      "skill_id": "skill_0001",
+      "trigger_condition": "Multiple threads read and/or write the same mutable shared state, especially during non-atomic read-modify-write operations like incrementing a counter.",
+      "steps": [
+        "Identify all shared mutable variables that are accessed by more than one thread.",
+        "Choose a synchronization primitive (e.g., threading.Lock) and guard every read-modify-write sequence involving the shared state with an acquire/release block so the critical section executes atomically."
+      ],
+      "expected_effect": "Eliminates lost updates and other race conditions by ensuring only one thread at a time mutates the shared state, producing deterministic, correct results.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:41:45.601307",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0002",
+      "trigger_condition": "Multiple threads mutate a shared mutable collection (e.g., list, dict) by calling methods that are not guaranteed to be atomic, such as list.append, list.extend, list.pop, or dict.update, and the program relies on the final collection state.",
+      "steps": [
+        "Identify the shared collection object and all threads that access it.",
+        "Create a single threading.Lock that is visible to every thread.",
+        "Wrap every mutating operation on the shared collection with the lock using a with statement so that only one thread can mutate the collection at a time."
+      ],
+      "expected_effect": "The collection is modified serially across threads, preventing lost updates, corrupted structure, and incorrect final counts or contents.",
+      "success_count": 1,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:41:45.601307",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0003",
+      "trigger_condition": "When encountering concurrencyrace: List element used as shared counter without lock.",
+      "steps": [
+        "Identify the problematic pattern in the buggy code.",
+        "Remove or replace the unsafe pattern: counter[0] += 1",
+        "Apply the safe fix: lock = threading.Lock()",
+        "Verify the fix with the provided test cases."
+      ],
+      "expected_effect": "The code handles concurrencyrace gracefully and passes all tests.",
+      "success_count": 0,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:41:45.494917",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0004",
+      "trigger_condition": "A function or method contains an unnecessary blocking delay (e.g., time.sleep, synchronous wait, or artificial pause) that is not required for correctness and causes callers to exceed connection or response timeouts.",
+      "steps": [
+        "Locate the blocking or delay call and determine whether the wait is essential to the function's result (e.g., waiting for a real external condition) or merely an unneeded leftover.",
+        "Remove or reduce the non-essential delay, or replace it with a bounded, non-blocking, or polling-based alternative if a short wait is genuinely required.",
+        "Verify that callers now receive a quick response and that the existing test suite still passes."
+      ],
+      "expected_effect": "The function returns promptly without causing connection timeouts, while preserving correct behavior for all test cases.",
+      "success_count": 1,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:42:40.008249",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0005",
+      "trigger_condition": "A function makes a blocking network or socket connection (e.g., socket.create_connection, socket.connect, or similar) without an explicit timeout, which can hang indefinitely when the target host or port is unreachable, closed, or unresponsive.",
+      "steps": [
+        "Locate the blocking network call and determine its default timeout behavior (often None or infinite).",
+        "Add a finite, context-appropriate timeout argument to the connection call (e.g., timeout=5).",
+        "Wrap the connection attempt and any subsequent I/O in a try/except that catches timeout-related and network-level exceptions (e.g., socket.timeout, socket.error, ConnectionRefusedError, OSError).",
+        "Ensure the socket or connection object is explicitly closed after a successful open and in failure paths, such as by using s.close() or a context manager/finally block.",
+        "Return a sensible result for failure (e.g., False or None) or raise a domain-specific error instead of propagating raw socket exceptions."
+      ],
+      "expected_effect": "The operation fails fast within a bounded time when the target is unreachable, avoids indefinite hangs, releases network resources reliably, and produces deterministic behavior for callers and tests.",
+      "success_count": 0,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:42:40.007539",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0006",
+      "trigger_condition": "A function opens a file by path and either crashes with FileNotFoundError when the file is missing, leaks a file handle because it does not close the descriptor, or both.",
+      "steps": [
+        "Replace the bare open call with a with statement so the file descriptor is automatically closed even if an exception occurs.",
+        "Wrap the file operation in a try/except FileNotFoundError block.",
+        "In the exception handler, return a sensible default value for the use case (e.g., an empty list, empty string, None, or an empty dict) instead of propagating the raw FileNotFoundError.",
+        "Verify the function with tests that include the missing-file case and the successful-read case."
+      ],
+      "expected_effect": "The function handles missing files gracefully without leaking file handles, returns a consistent default value, and passes all test cases including the missing-file path.",
+      "success_count": 1,
+      "failure_count": 5,
+      "last_used_timestamp": "2026-07-17T08:47:17.024719",
+      "deprecated": true
+    },
+    {
+      "skill_id": "skill_0007",
+      "trigger_condition": "A loop (while/for) depends on a condition variable that is never advanced inside the loop body, causing an infinite loop.",
+      "steps": [
+        "Identify every variable that appears in the loop condition and determines when the loop should stop.",
+        "Ensure that at least one of those variables is modified inside the loop body on every execution path so that the condition moves closer to becoming false.",
+        "Verify that the update has the correct direction and magnitude (e.g., decrementing toward zero, incrementing toward a bound) and that no continue or branch bypasses it."
+      ],
+      "expected_effect": "The loop makes progress toward termination on every iteration and exits as expected, eliminating infinite loops while preserving the intended computation.",
+      "success_count": 4,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:00.273302",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0008",
+      "trigger_condition": "A while loop traverses a sequence by index (e.g., nums[i]) but the loop condition only checks an accumulator or logical target, and the index is not advanced, causing an infinite loop and/or an IndexError when the target is not reached before the sequence ends.",
+      "steps": [
+        "Identify the index variable used to access sequence elements and the length of the sequence.",
+        "Add a bound check such as i < len(sequence) to the while condition so indexing stops at the last element.",
+        "Update the index (e.g., i += 1) inside the loop body on every execution path.",
+        "Decide how to handle the case where the sequence is exhausted before the target condition is met (e.g., return the current result, break, or raise)."
+      ],
+      "expected_effect": "The loop terminates when the target is reached or when the sequence ends, preventing infinite loops and index-out-of-bounds errors while preserving the intended computation.",
+      "success_count": 4,
+      "failure_count": 1,
+      "last_used_timestamp": "2026-07-17T08:50:00.273302",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0009",
+      "trigger_condition": "When encountering infiniteloop: Increment is zero, so loop never terminates.",
+      "steps": [
+        "Identify the problematic pattern in the buggy code.",
+        "Remove or replace the unsafe pattern: n += 0",
+        "Apply the safe fix: n *= 2",
+        "Verify the fix with the provided test cases."
+      ],
+      "expected_effect": "The code handles infiniteloop gracefully and passes all tests.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:00.273302",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0010",
+      "trigger_condition": "A function receives a numeric argument intended to represent a percentage or rate (e.g., 20 means 20%), but the implementation treats it as an absolute quantity or raw fraction, producing incorrect proportional results.",
+      "steps": [
+        "Confirm the semantic meaning of the parameter: determine whether it is a percentage of a base value rather than an absolute offset or a fraction in [0, 1].",
+        "Convert the percentage to a fractional multiplier by dividing by 100 (e.g., 20% becomes 0.2).",
+        "Apply the multiplier to the base value instead of adding or subtracting the raw number; for example, compute a discounted value as base * (1 - percentage / 100).",
+        "Verify with representative tests covering edge cases such as 0%, 100%, and intermediate values."
+      ],
+      "expected_effect": "The calculation correctly interprets percentage arguments as proportional fractions of the base value, producing the right magnitude and passing all tests.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:48:02.350758",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0011",
+      "trigger_condition": "An aggregating computation produces incorrect results because the accumulator is initialized to the wrong identity value, or the loop/update combines elements with the wrong operator (e.g., summing instead of multiplying, or vice versa).",
+      "steps": [
+        "Identify the intended reduction or aggregation (e.g., product, sum, min, max, intersection, union) and the corresponding mathematical identity element.",
+        "Inspect the accumulator's initial value and the operator used inside the loop or recursion; ensure they match the chosen reduction (e.g., 1 for multiplication, 0 for addition, an empty list for concatenation, infinity for min).",
+        "Replace the mismatched initial value or operator with the correct pair, and add/update tests that verify the expected result for the aggregation."
+      ],
+      "expected_effect": "The accumulation uses the correct identity element and combining operator, producing the intended mathematical result for all inputs and passing the relevant test cases.",
+      "success_count": 0,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:46:08.006755",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0012",
+      "trigger_condition": "A function receives a collection, sequence, or optional object and accesses an element, attribute, or method on it without first verifying that the input is non-null and non-empty, resulting in TypeError, IndexError, AttributeError, or similar null-pointer crashes.",
+      "steps": [
+        "Identify the point where the input is dereferenced (e.g., indexing, attribute access, or method call) and determine what valid inputs look like.",
+        "Add a guard clause at the start of the function or before the access that checks whether the input is truthy or otherwise valid; handle None and empty collections explicitly.",
+        "Return a sensible default value for the null/empty case, such as None, an empty collection, zero, or a domain-specific sentinel.",
+        "Verify the fix with tests covering the null case, the empty case, and representative valid inputs."
+      ],
+      "expected_effect": "The function no longer crashes on null or empty inputs; it returns a consistent, appropriate default and passes all tests including edge cases.",
+      "success_count": 3,
+      "failure_count": 1,
+      "last_used_timestamp": "2026-07-17T08:49:01.282090",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0013",
+      "trigger_condition": "A string is built by concatenating a literal or another string with a value of a non-string type (e.g., int, float, object), raising a TypeError because the language does not coerce non-strings to strings during concatenation.",
+      "steps": [
+        "Locate the concatenation or formatting expression that mixes strings with non-string values.",
+        "Determine the intended textual representation of each non-string operand and convert it explicitly (e.g., using str(value), repr(value), or a formatting method such as f-strings or string format) before combining it with the string.",
+        "Verify the fix with tests covering representative non-string types and any edge cases (e.g., negative numbers, zero, objects)."
+      ],
+      "expected_effect": "The string construction succeeds for all expected input types, the TypeError is eliminated, and the output contains the correct textual representation of each value.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:49:01.282090",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0014",
+      "trigger_condition": "A function performs arithmetic, comparison, or other numeric operations on inputs that may arrive as strings representing numbers (e.g., from user input, JSON, or network payloads), causing TypeError or semantically wrong results.",
+      "steps": [
+        "Identify the parameters used in numeric operations and determine the expected numeric type (e.g., int, float, or Decimal).",
+        "At the start of the function or immediately before each numeric operation, convert the inputs to the expected numeric type using int(value), float(value), or an equivalent constructor.",
+        "If the input may be invalid or non-numeric, wrap the conversion in a try/except for ValueError/TypeError and return a sensible default, None, or raise a domain-specific error instead of propagating the raw exception.",
+        "Verify the function with tests that use both native numeric values and numeric strings, as well as any relevant edge cases."
+      ],
+      "expected_effect": "The function treats numeric-string inputs equivalently to native numeric inputs, eliminating TypeError and producing correct numeric results for all supported inputs.",
+      "success_count": 1,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:49:01.282090",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0015",
+      "trigger_condition": "When encountering typeerror: Comparing string and int with max raises TypeError.",
+      "steps": [
+        "Identify the problematic pattern in the buggy code.",
+        "Remove or replace the unsafe pattern: return max(a, b)",
+        "Apply the safe fix: def _to_number(x):",
+        "Verify the fix with the provided test cases."
+      ],
+      "expected_effect": "The code handles typeerror gracefully and passes all tests.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:00.273302",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0016",
+      "trigger_condition": "A function or expression performs division, modulo, or another arithmetic operation that has a divisor, and the divisor may be zero, causing ZeroDivisionError.",
+      "steps": [
+        "Identify the divisor expression in the division or modulo operation and determine whether it can be zero for valid inputs.",
+        "Add a guard clause immediately before the operation that checks whether the divisor is zero; in that case, return a sensible default value (e.g., None, 0, or a sentinel) or raise a domain-specific exception instead of allowing the raw ZeroDivisionError to propagate.",
+        "Verify the fix with tests that include a zero divisor case and representative non-zero divisor cases."
+      ],
+      "expected_effect": "The operation handles a zero divisor gracefully without raising ZeroDivisionError, returns a consistent or domain-appropriate result, and passes all test cases including the zero-divisor edge case.",
+      "success_count": 2,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:27.119966",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0017",
+      "trigger_condition": "When encountering zerodivisionerror: If no positive numbers exist, len(pos) is zero.",
+      "steps": [
+        "Identify the problematic pattern in the buggy code.",
+        "Apply the safe fix: if not pos:",
+        "Verify the fix with the provided test cases."
+      ],
+      "expected_effect": "The code handles zerodivisionerror gracefully and passes all tests.",
+      "success_count": 1,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:27.119966",
+      "deprecated": false
+    },
+    {
+      "skill_id": "skill_0018",
+      "trigger_condition": "When encountering zerodivisionerror: Modulo by zero raises ZeroDivisionError.",
+      "steps": [
+        "Identify the problematic pattern in the buggy code.",
+        "Apply the safe fix: if b == 0:",
+        "Verify the fix with the provided test cases."
+      ],
+      "expected_effect": "The code handles zerodivisionerror gracefully and passes all tests.",
+      "success_count": 0,
+      "failure_count": 0,
+      "last_used_timestamp": "2026-07-17T08:50:26.892084",
+      "deprecated": false
+    }
+  ],
+  "count": 18,
+  "updated_at": "2026-07-17T08:50:28.048871"
+}
